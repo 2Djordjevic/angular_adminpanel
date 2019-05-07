@@ -1,0 +1,131 @@
+<div class="wrapper">
+
+		<div ng-include="'ng-app/views/header.html'"></div>
+		<!-- Left side column. contains the logo and sidebar -->
+		<div ng-include="'ng-app/views/sidebar.html'"></div>
+		
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Manage Categories
+				</h1>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<!-- right column -->
+					<div class="col-md-4">
+						<div class="box box-warning">
+							<!-- /.box-header -->
+							<div class="box-body">
+								<form role="form">
+									<!-- textarea -->
+									<div class="form-group" ng-class="{'has-error':categoryError === true}">
+										<label>Category Name</label>
+										<input type="text" ng-model="category.category_name" class="form-control" placeholder="Name">
+									</div>
+									<div class="form-group">
+										<button class="btn btn-success" ng-click="addCategory()">Add Category</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header">
+								<h3 class="box-title">Records</h3>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body">
+								<!-- <div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Show Records</label>
+											<select class="form-control" ng-model="pagination.limit" ng-change="setLimit()">
+												<option value="10">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+										</div>
+									</div>
+								</div> -->
+								<p><pagination total-items="pagination.total" items-per-page="pagination.limit" ng-model="pagination.currentPage" max-size="pagination.maxSize" class="pagination-sm" boundary-links="true"></pagination></p>
+								<table class="table table-bordered table-striped table-condensed">
+									<tbody>
+										<tr>
+											<th style="cursor:pointer" ng-click="toggleColumnFilter('id')">
+												ID
+											</th>
+											<th style="cursor:pointer" ng-click="toggleColumnFilter('keyword')">
+												Category Name
+											</th>
+											<th>Action</th>
+										</tr>
+										<tr ng-repeat="c in categories" ng-if="categories.length > 0">
+											<!-- <td>{{offset+($index + 1)}}</td> -->
+											<td>{{c.id}}</td>
+											<td>
+												<span editable-text="c.category_name" e-name="category_name" e-form="rowform" onbeforesave="checkCategoryLength($data)" e-required>
+													{{c.category_name}}
+												</span>
+											</td>
+											<td style="white-space: nowrap">
+												<!-- form -->
+												<form editable-form name="rowform" onbeforesave="saveCategory($data, c.id)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == c">
+													<button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+														Done
+													</button>
+													<button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+														Cancel
+													</button>
+												</form>
+												<div class="buttons" ng-show="!rowform.$visible">
+													<button class="btn btn-primary" ng-click="rowform.$show()">Edit</button>
+													<button class="btn btn-danger" ng-click="removeRecord(c.id)">Delete</button>
+												</div>
+											</td>
+
+										</tr>
+										<tr ng-if="answers.length == 0">
+											<td colspan="4"><center>Nothing here yet!</center></td>
+										</tr>
+									</tbody>
+								</table>
+								<p><pagination total-items="pagination.total" items-per-page="pagination.limit" ng-model="pagination.currentPage" max-size="pagination.maxSize" class="pagination-sm" boundary-links="true"></pagination></p>
+							</div>
+							<!-- /.box-body -->
+							<!-- <div class="box-footer clearfix">
+								<ul class="pagination pagination-sm no-margin pull-right">
+									<li><a href="#">«</a>
+									</li>
+									<li><a href="#">1</a>
+									</li>
+									<li><a href="#">2</a>
+									</li>
+									<li><a href="#">3</a>
+									</li>
+									<li><a href="#">»</a>
+									</li>
+								</ul>
+							</div> -->
+						</div>
+						<!-- /.box -->
+					</div>
+
+				</div>
+				<!-- /.row -->
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div ng-include="'ng-app/views/footer.html'"></div>
+	</div>
+	<!-- ./wrapper -->

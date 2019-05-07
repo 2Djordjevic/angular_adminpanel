@@ -1,0 +1,69 @@
+<div class="wrapper">
+
+		<div ng-include="'ng-app/views/header.html'"></div>
+		<!-- Left side column. contains the logo and sidebar -->
+		<div ng-include="'ng-app/views/sidebar.html'"></div>
+		
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					Combinations
+				</h1>
+			</section>
+
+			<!-- Main content -->
+			<section class="content" style="overflow-y:scroll">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info" ng-repeat="q in questions">
+							<div class="box-header with-border">
+								<h3 class="box-title">{{q.question}}</h3>
+							</div>
+							<div class="box-body" style="display: block;">
+								<div class="form-group" ng-class="{'has-error': errors[$index] === true}">
+									<input class="form-control" ng-model="associatedKeywords[$index]" placeholder="Type keyword..." typeahead="keyword for keyword in getKeywordSuggestions($viewValue, q.id, $index)" typeahead-loading="loadingLocations" />
+								</div>
+							</div>
+						</div>
+						<div class="box box-warning">
+							<!-- /.box-header -->
+							<div class="box-body">
+								<form role="form">
+									<div class="form-group">
+										<label>Select Authorities</label>
+										<div
+											isteven-multi-select
+											input-model="authorities"
+											output-model="selectedAuthorities"
+											button-label="authority_name"
+											item-label="authority_name"
+											tick-property="ticked"
+											orientation="horizontal"
+										>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<div class="box box-success">
+							<div class="box-body" style="display: block;">
+								<p ng-if="showSaveSuccess === true" class="alert alert-success">Saved successfully.</p>
+								<div class="form-group">
+									<button class="btn btn-success" ng-click="saveCombination()">Save</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<!-- /.row -->
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div ng-include="'ng-app/views/footer.html'"></div>
+	</div>
+	<!-- ./wrapper -->

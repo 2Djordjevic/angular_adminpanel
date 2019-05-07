@@ -1,0 +1,277 @@
+<style type="text/css">
+	.checkboxLayer {
+		max-height: 300px !important;
+  		overflow-y: scroll !important;
+	}
+	.editable-checklist label{
+		float: left !important;
+	}
+</style>
+<div class="wrapper">	
+
+		<div ng-include="'ng-app/views/header.html'"></div>
+		<!-- Left side column. contains the logo and sidebar -->
+		<div ng-include="'ng-app/views/sidebar.html'"></div>
+		
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header" ng-if="showUI === true">
+				<h1>
+					Manage questions
+				</h1>
+			</section>
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="row">
+					<!-- right column -->
+					<div class="col-md-4">
+						<div class="box box-warning">
+							<!-- /.box-header -->
+							<div class="box-body">
+								<form role="form">
+									<!-- textarea -->
+									<div class="form-group" ng-class="{'has-error':keywordError === true}">
+										<label>Keyword</label>
+										<input type="text" placeholder="Keywords.." ng-model="answer.keyword" typeahead="keyword for keyword in getKeywordSuggestions($viewValue)" typeahead-loading="loadingLocations" class="form-control">
+									</div>
+									<div class="form-group">
+										<label>Approved</label>
+										<input type="checkbox" ng-model="answer.approved" />
+									</div>
+									<div class="form-group">
+										<label>Visible</label>
+										<input type="checkbox" ng-model="answer.visible" />
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="box box-warning">
+							<!-- /.box-header -->
+							<div class="box-body">
+								<form role="form">
+									<!-- textarea -->
+									<div class="form-group">
+										<label>Select</label>
+										<select class="form-control" ng-model="answer.question_id" ng-options="q.id as q.question for q in questions">
+											<option value="">Select question</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label>Select Catrgories</label>
+										<div
+											isteven-multi-select
+											input-model="categories"
+											output-model="answer.selectedCategories"
+											button-label="category_name"
+											item-label="category_name"
+											tick-property="ticked"
+											orientation="horizontal"
+										>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<!-- general form elements disabled -->
+						<div class="box box-warning">
+							<div class="box-body">
+								<form role="form">
+									<div class="form-group">
+										<label>Notes</label>
+										<textarea ng-model="answer.notes" class="form-control" placeholder="Notes"></textarea>
+									</div>
+									<div class="form-group">
+										<button class="btn btn-success" ng-click="addAnswer()">Add question</button>
+									</div>
+								</form>
+							</div>
+							<!-- /.box-body -->
+						</div>
+						<!-- /.box -->
+					</div>
+				</div>
+				<div class="row">
+					<!-- right column -->
+					<div class="col-md-12">
+						<div class="box box-danger">
+							<div class="box-header">
+								<h3 class="box-title">Filters</h3>
+							</div><!-- /.box-header -->
+							<!-- /.box-header -->
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Select question</label>
+											<select class="form-control" ng-model="filter.question_id" ng-options="q.id as q.question for q in questions" ng-change="setFilter('question_id')">
+												<option value="">All</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Status</label>
+											<select class="form-control" ng-model="filter.assigned" ng-change="setFilter('assigned')">
+												<option value="">All</option>
+												<option value="assigned">Assigned</option>
+												<option value="unassigned">Unassigned</option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div><!-- end row -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="box box-info">
+							<div class="box-header">
+								<h3 class="box-title">Records</h3>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Show Records</label>
+											<select class="form-control" ng-model="pagination.limit" ng-change="setLimit()">
+												<option value="10">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Show Records</label>
+											<input class="form-control" type="text" ng-model="filter.searchStr" placeholder="Search" />
+										</div>
+									</div>
+								</div>
+								<p><pagination total-items="pagination.total" items-per-page="pagination.limit" ng-model="pagination.currentPage" max-size="pagination.maxSize" class="pagination-sm" boundary-links="true"></pagination></p>
+								<table class="table table-bordered table-striped table-condensed">
+									<tbody>
+										<tr>
+											<th style="cursor:pointer" ng-click="toggleColumnFilter('id')">
+												ID
+												<span ng-if="idSortState == 'desc'"><i class="fa fa-sort-asc"></i></span>
+												<span ng-if="idSortState == 'asc'"><i class="fa fa-sort-desc"></i></span>
+											</th>
+											<th style="cursor:pointer" ng-click="toggleColumnFilter('keyword')">
+												Keyword
+												<span ng-if="keywordSortState == 'desc'"><i class="fa fa-sort-asc"></i></span>
+												<span ng-if="keywordSortState == 'asc'"><i class="fa fa-sort-desc"></i></span>
+											</th>
+											<th>Question</th>
+											<th>Approved</th>
+											<th>Visible</th>
+											<th>Categories</th>
+											<th>Notes</th>
+											<th>Action</th>
+										</tr>
+										<tr ng-repeat="a in answers" ng-if="answers.length > 0">
+											<!-- <td>{{offset+($index + 1)}}</td> -->
+											<td>{{a.id}}</td>
+											<td>
+												<span editable-text="a.keyword" e-name="keyword" e-form="rowform" onbeforesave="checkKeywordLength($data)" e-required>
+													<abbr ng-if="a.notes" title="{{a.notes}}"><i class="fa fa-info-circle"></i></abbr> &nbsp;{{a.keyword}}
+												</span>
+											</td>
+											<td>
+												<span editable-select="a.question_id" e-name="question_id" e-form="rowform" e-ng-options="q.id as q.question for q in questions">
+													{{ showQuestion(a) }}
+												</span>
+											</td>
+											<td>
+												<span editable-checkbox="a.approved" e-name="approved" e-form="rowform" e-title="Approved">
+													{{ a.approved && "Yes" || "No" }}
+												</span>
+											</td>
+											<td>
+												<span editable-checkbox="a.visible" e-name="visible" e-form="rowform"  e-title="Visible">
+													{{ a.visible && "Yes" || "No" }}
+												</span>
+											</td>
+											<td>
+												<!-- <span href="javascript:void(0)" editable-checklist="a.selectedCategories" e-name="selectedCategories" e-form="rowform" e-ng-options="c.answer_id as c.category_name for c in a.selectedCategories">
+													{{ showCategories(a.selectedCategories) }}
+												</span> -->
+												<div ng-show="rowform.$visible"
+													isteven-multi-select
+													input-model="a.categories"
+													output-model="selectedCats[$index]"
+													button-label="category_name"
+													item-label="category_name"
+													tick-property="ticked"
+												>
+												</div>
+												<span ng-show="!rowform.$visible" ng-repeat="cat in selectedCats[$index]">
+													<label class="label label-info">{{cat.category_name}}</label>&nbsp;
+												</span>
+											</td>
+											<td>
+												<span editable-text="a.notes" e-name="notes" e-form="rowform">
+													{{a.notes}}
+												</span>
+											</td>
+											<td style="white-space: nowrap">
+												<!-- form -->
+												<form editable-form name="rowform" onbeforesave="saveAnswer($data, a.id, $index, a.selectedCategories)" ng-show="rowform.$visible" class="form-buttons form-inline" shown="inserted == a">
+													<button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">
+														Done
+													</button>
+													<button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">
+														Cancel
+													</button>
+												</form>
+												<div class="buttons" ng-show="!rowform.$visible">
+													<button class="btn btn-primary" ng-click="rowform.$show()">Edit</button>
+													<button class="btn btn-danger" ng-click="removeRecord(a.id)">Delete</button>
+												</div>
+											</td>
+
+										</tr>
+										<tr ng-if="answers.length == 0">
+											<td colspan="4"><center>Nothing here yet!</center></td>
+										</tr>
+									</tbody>
+								</table>
+								<p><pagination total-items="pagination.total" items-per-page="pagination.limit" ng-model="pagination.currentPage" max-size="pagination.maxSize" class="pagination-sm" boundary-links="true"></pagination></p>
+							</div>
+							<!-- /.box-body -->
+							<!-- <div class="box-footer clearfix">
+								<ul class="pagination pagination-sm no-margin pull-right">
+									<li><a href="#">«</a>
+									</li>
+									<li><a href="#">1</a>
+									</li>
+									<li><a href="#">2</a>
+									</li>
+									<li><a href="#">3</a>
+									</li>
+									<li><a href="#">»</a>
+									</li>
+								</ul>
+							</div> -->
+						</div>
+						<!-- /.box -->
+					</div>
+
+				</div>
+				<!-- /.row -->
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div ng-include="'ng-app/views/footer.html'"></div>
+	</div>
+	<!-- ./wrapper -->
